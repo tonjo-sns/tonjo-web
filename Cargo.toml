@@ -1,0 +1,12 @@
+[package]
+name = "tonjo-web"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+yew = "0.19.3"
+tonjo-sns-client = { path = "../tonjo-sns-client", features = ["wasm-bindgen"] }
+base64 = "0.13.0"
+web-sys = "0.3.55"
