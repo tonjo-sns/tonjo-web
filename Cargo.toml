@@ -7,6 +7,6 @@ edition = "2021"
 
 [dependencies]
 yew = "0.19.3"
-tonjo-sns-client = { path = "../tonjo-sns-client", features = ["wasm-bindgen"] }
+tonjo-sns-client = { git = "ssh://git@github.com/tonjo-sns/tonjo-sns-client", rev = "5d135109", features = ["wasm-bindgen"] }
 base64 = "0.13.0"
 web-sys = "0.3.55"
