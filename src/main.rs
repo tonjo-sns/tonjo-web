@@ -10,8 +10,6 @@ mod components;
 
 use components::posts_list::PostsList;
 
-enum NoneMsg {}
-
 struct Main {
     posts: VecDeque<Vec<u8>>,
     account: Account,
@@ -39,6 +37,7 @@ impl Component for Main {
         match msg {
             MainMsg::PostString(post) => {
                 let new_post = self.account.post(&post);
+                self.post_input.clone().cast::<HtmlTextAreaElement>().unwrap().set_value("");
                 self.posts.push_back(new_post);
             }
         };
