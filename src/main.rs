@@ -1,9 +1,11 @@
 //! tonjo-sns のウェブアプリ。
 
+use std::collections::VecDeque;
+
 use base64::{encode_config, URL_SAFE};
 use tonjo_sns_client::*;
 use web_sys::HtmlTextAreaElement;
-use yew::prelude::*;
+use yew::*;
 
 struct Post {
     update: Vec<u8>,
@@ -37,7 +39,7 @@ impl Component for Post {
 enum NoneMsg {}
 
 struct Main {
-    value: Vec<Vec<u8>>,
+    posts: VecDeque<Vec<u8>>,
     account: Account,
     post_input: NodeRef,
 }
@@ -53,7 +55,7 @@ impl Component for Main {
     fn create(_ctx: &Context<Self>) -> Self {
         let account = Account::new();
         Self {
-            value: Default::default(),
+            posts: Default::default(),
             account,
             post_input: NodeRef::default(),
         }
@@ -63,7 +65,7 @@ impl Component for Main {
         match msg {
             MainMsg::PostString(post) => {
                 let new_post = self.account.post(&post);
-                self.value.push(new_post);
+                self.posts.push_back(new_post);
             }
         };
         true
@@ -81,15 +83,21 @@ impl Component for Main {
             <main>
                 <textarea ref={self.post_input.clone()}/>
                 <button onclick={post}>{ "Post" }</button>
-            {
-                for self.value.iter().filter(|e| {
-                    let update = Update::load(e);
-                    update.filename() == FILENAME_POST
-                }).map(|post| html!(<Post update={post.clone()} />))
-            }
+                <PostsList posts={self.posts.clone()} />
             </main>
         }
     }
+}
+
+#[derive(PartialEq, Properties)]
+pub struct PostsListProps {
+    pub posts: VecDeque<Vec<u8>>,
+}
+#[function_component(PostsList)]
+pub fn posts_list(props: &PostsListProps) -> Html {
+    html!(<>{
+        for props.posts.iter().map(|post| html!(<Post update={post.clone()} />))
+    }</>)
 }
 
 fn main() {
