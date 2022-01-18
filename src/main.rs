@@ -2,39 +2,13 @@
 
 use std::collections::VecDeque;
 
-use base64::{encode_config, URL_SAFE};
 use tonjo_sns_client::*;
 use web_sys::HtmlTextAreaElement;
-use yew::*;
+use yew::prelude::*;
 
-struct Post {
-    update: Vec<u8>,
-}
-#[derive(Properties, PartialEq)]
-struct PostProps {
-    #[prop_or_default]
-    update: Vec<u8>,
-}
+mod components;
 
-impl Component for Post {
-    type Message = NoneMsg;
-    type Properties = PostProps;
-    fn create(ctx: &Context<Self>) -> Self {
-        Post {
-            update: ctx.props().update.clone(),
-        }
-    }
-    fn view(&self, _ctx: &Context<Self>) -> Html {
-        let update = Update::load(&self.update);
-        html! {
-            <>
-                <h6>{ encode_config(update.author_id().as_slice(), URL_SAFE) }</h6>
-                <div>{ std::str::from_utf8(&update.filebytes()).unwrap_or("") }</div>
-                <hr />
-            </>
-        }
-    }
-}
+use components::posts_list::PostsList;
 
 enum NoneMsg {}
 
@@ -87,17 +61,6 @@ impl Component for Main {
             </main>
         }
     }
-}
-
-#[derive(PartialEq, Properties)]
-pub struct PostsListProps {
-    pub posts: VecDeque<Vec<u8>>,
-}
-#[function_component(PostsList)]
-pub fn posts_list(props: &PostsListProps) -> Html {
-    html!(<>{
-        for props.posts.iter().map(|post| html!(<Post update={post.clone()} />))
-    }</>)
 }
 
 fn main() {
