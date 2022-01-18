@@ -84,7 +84,7 @@ impl Component for Main {
             {
                 for self.value.iter().filter(|e| {
                     let update = Update::load(e);
-                    update.filename() == POST_FILETYPE
+                    update.filename() == FILENAME_POST
                 }).map(|post| html!(<Post update={post.clone()} />))
             }
             </main>
