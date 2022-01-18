@@ -1,3 +1,5 @@
+//! tonjo-sns のウェブアプリ。
+
 use base64::{encode_config, URL_SAFE};
 use tonjo_sns_client::*;
 use web_sys::HtmlTextAreaElement;
