@@ -1,2 +1,2 @@
-pub mod posts_list;
-
+mod posts_list;
+pub use posts_list::PostsList;

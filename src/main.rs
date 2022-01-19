@@ -8,7 +8,7 @@ use yew::prelude::*;
 
 mod components;
 
-use components::posts_list::PostsList;
+use components::PostsList;
 
 #[function_component(MainPage)]
 fn main_page() -> Html {
@@ -16,9 +16,9 @@ fn main_page() -> Html {
     let posts = use_state(|| VecDeque::<Vec<u8>>::new());
     let draftarea_ref = use_node_ref();
     let handle_post = {
-        let draftarea_ref = draftarea_ref.clone();
-        let posts = posts.clone();
         let account_state = account_state.clone();
+        let posts = posts.clone();
+        let draftarea_ref = draftarea_ref.clone();
         move |_| {
             if let Some(draftarea_ref) = draftarea_ref.cast::<HtmlTextAreaElement>() {
                 let mut account = Account::load_state((*account_state).clone());
