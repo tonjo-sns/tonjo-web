@@ -33,7 +33,7 @@ fn main_page() -> Html {
     };
     html! {
         <main>
-            <textarea ref={draftarea_ref}/>
+            <textarea ref={draftarea_ref} placeholder={"What's Happening?"}/>
             <button onclick={handle_post}>{ "Post" }</button>
             <PostsList posts={(*posts).clone()} />
         </main>
