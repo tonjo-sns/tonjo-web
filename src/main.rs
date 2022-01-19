@@ -26,7 +26,7 @@ fn main_page() -> Html {
                 let post_vec = account.post(&post_string);
                 draftarea_ref.set_value("");
                 let mut ps = (*posts).clone();
-                ps.push_back(post_vec);
+                ps.push_front(post_vec);
                 posts.set(ps)
             }
         }
