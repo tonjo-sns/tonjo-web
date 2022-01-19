@@ -10,58 +10,36 @@ mod components;
 
 use components::posts_list::PostsList;
 
-struct Main {
-    posts: VecDeque<Vec<u8>>,
-    account: Account,
-    post_input: NodeRef,
-}
-
-enum MainMsg {
-    PostString(String),
-}
-
-impl Component for Main {
-    type Message = MainMsg;
-    type Properties = ();
-
-    fn create(_ctx: &Context<Self>) -> Self {
-        let account = Account::new();
-        Self {
-            posts: Default::default(),
-            account,
-            post_input: NodeRef::default(),
-        }
-    }
-
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        match msg {
-            MainMsg::PostString(post) => {
-                let new_post = self.account.post(&post);
-                self.post_input.clone().cast::<HtmlTextAreaElement>().unwrap().set_value("");
-                self.posts.push_back(new_post);
+#[function_component(MainPage)]
+fn main_page() -> Html {
+    let account_state = use_state(|| Account::new().save_state());
+    let posts = use_state(|| VecDeque::<Vec<u8>>::new());
+    let draftarea_ref = use_node_ref();
+    let handle_post = {
+        let draftarea_ref = draftarea_ref.clone();
+        let posts = posts.clone();
+        let account_state = account_state.clone();
+        move |_| {
+            if let Some(draftarea_ref) = draftarea_ref.cast::<HtmlTextAreaElement>() {
+                let mut account = Account::load_state((*account_state).clone());
+                let post_string = draftarea_ref.value();
+                let post_vec = account.post(&post_string);
+                draftarea_ref.set_value("");
+                let mut ps = (*posts).clone();
+                ps.push_back(post_vec);
+                posts.set(ps)
             }
-        };
-        true
-    }
-
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        let link = ctx.link();
-        let my_input_ref = self.post_input.clone();
-        let post = link.callback(move |_| {
-            let input = my_input_ref.cast::<HtmlTextAreaElement>();
-            MainMsg::PostString(input.unwrap().value())
-        });
-
-        html! {
-            <main>
-                <textarea ref={self.post_input.clone()}/>
-                <button onclick={post}>{ "Post" }</button>
-                <PostsList posts={self.posts.clone()} />
-            </main>
         }
+    };
+    html! {
+        <main>
+            <textarea ref={draftarea_ref}/>
+            <button onclick={handle_post}>{ "Post" }</button>
+            <PostsList posts={(*posts).clone()} />
+        </main>
     }
 }
 
 fn main() {
-    yew::start_app::<Main>();
+    yew::start_app::<MainPage>();
 }
