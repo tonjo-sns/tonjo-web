@@ -11,13 +11,10 @@ pub struct PostProps {
 pub fn post(props: &PostProps) -> Html {
     let update = Update::load(&props.update);
     html! {
-        <>
             <div>
                 <h6>{ encode_config(update.author_id().as_slice(), URL_SAFE) }</h6>
                 <div>{ std::str::from_utf8(&update.filebytes()).unwrap_or("") }</div>
             </div>
-            <hr />
-        </>
     }
 }
 
@@ -27,7 +24,14 @@ pub struct PostsListProps {
 }
 #[function_component(PostsList)]
 pub fn posts_list(props: &PostsListProps) -> Html {
-    html!(<>{
-        for props.posts.iter().map(|post| html!(<Post update={post.clone()} />))
-    }</>)
+    html! {
+        <div> {
+            for props.posts.iter().map(|post| html!{
+                <>
+                    <Post update={post.clone()} />
+                    <hr />
+                </>
+            })
+        } </div>
+    }
 }
